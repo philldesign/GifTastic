@@ -72,28 +72,30 @@ $(document).ready(function () {
     })
 
     var title = "The%20Lord+Of+The+Rings";
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + title + "&api_key=qQ0LQq49j0vnEylR5TyfMMEiuCje5z0c&limit=5";
 
     $(document).on("click", ".load-gif", function () {
-        var gifnumber = $(this).attr("data-gif");
+        var gifnumber = $(this).attr("data-gif"); 
         console.log(gifnumber);
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + gifnumber + "&api_key=qQ0LQq49j0vnEylR5TyfMMEiuCje5z0c&limit=5";
+        // IF CALLING THE FUNCTION ONLY ONCE, PUT IT INSIDE THE FUNCTION //
+        // IF CALLING THE FUNCTION MORE THAN ONCE, LEAVE IT OUTSIDE THE FUNCTION //
 
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function (response) {
 
+            console.log(response);
             for (var i = 0; i < response.data.length; i++) {
 
                 // Collect the animal gif URLs
                 var imageurl = response.data[i].images.fixed_height.url; // moving image
+                var $img = $('<img>');
+            
 
-                console.log(response);
-
-
-                $("#gif-list").append($("<img>"));
-                $("img").attr("src", imageurl);
-                $("img").append(imageurl);
+                $("#gif-list").append($img);
+                $img.attr("src", imageurl);
+              
 
 
 
