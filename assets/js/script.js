@@ -1,6 +1,6 @@
 //javascript, jQuery
 
-list = [];
+var decades = ['20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s', '00s', '10s'];
 
 var xhr = $.get("https://api.giphy.com/v1/gifs/search?q=ryan+gosling&api_key=qQ0LQq49j0vnEylR5TyfMMEiuCje5z0c&limit=5");
 xhr.done(function (data) {
@@ -10,52 +10,71 @@ xhr.done(function (data) {
 var title = "The%20Lord+Of+The+Rings";
 var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + title + "&api_key=qQ0LQq49j0vnEylR5TyfMMEiuCje5z0c&limit=5";
 
+$(document).ready(function () {
 
+    // Append Intial animal buttons
+    rendergifbuttons();
 
-function rendergifs(list) {
-    $("#gif-list").empty(); // empties out the html
+    function rendergifbuttons() {
+        $("#gif-list").empty(); // empties out the html
 
-    // render our todos to the page
-    for (var i = 0; i < list.length; i++) {
-        // Then set the to-do "value" as text to this <p> element.
-        var gifitem = $("<button>");
-        gifitem.attr("data-gif", i);
-        gifitem.addClass("load-gif");
+        // render our todos to the page
+        for (var i = 0; i < decades.length; i++) {
+            // Then set the to-do "value" as text to this <button> element.
 
+            var gifitem = $('<button>');
+            gifitem.attr("data-gif", decades[i]);
+            gifitem.addClass("load-gif");
+            gifitem.text(decades[i]);
 
-        gifitem.text(list[i]);
-
-        // Create a button with unique identifiers based on what number it is in the list. Again use jQuery to do this.
-        // Give your button a data attribute called data-to-do and a class called "checkbox".
-        // Lastly add a checkmark inside.
-
-        // Add the button and to do item to the to-dos div
-        $("#gif-list").append(gifitem);
+            // Create a button with unique identifiers based on what number it is in the list. Again use jQuery to do this.
+            // Give your button a data attribute called data-to-do and a class called "checkbox".
+            // Lastly add a checkmark inside.
+            // Add the button to the div
+            $("#gif-list").append(gifitem);
+        }
     }
-}
 
-$("#add-gif").on("click", function (event) {
-    event.preventDefault();
+    $("#add-gif").on("click", function () {
 
-    // Get the to-do "value" from the textbox and store it as a variable
-    var gifname = $("#gif").val().trim();
+        // Get the to-do "value" from the textbox and store it as a variable
+        var newdecade = $("#gif").val().trim();
 
-    // Adding our new todo to our local list variable and adding it to local storage
-    list.push(gifname);
+        var isUnique = true;
+        for (var i = 0; i < decades.length; i++) {
+            if (decades[i] == newdecade) {
+                isUnique = false;
+            }
+        }
 
-    // Update the todos on the page
-    rendergifs(list);
+        // Append new button if the input is unique
+        if (newdecade == "") {
+            alert("Sorry. No empty buttons are allowed!")
+        }
 
-    // Clear the textbox when done
-    $("#gif").val("");
-    rendergifs(list);
+        else if (isUnique) {
 
-});
+            // Add the new decade button to the list
+            decades.push(newdecade);
 
-var title = "The%20Lord+Of+The+Rings";
-var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + title + "&api_key=qQ0LQq49j0vnEylR5TyfMMEiuCje5z0c&limit=5";
+            // Add new buttons to the DOM
+            rendergifbuttons();
 
-    $(document).on("click", ".load-gif", function() {
+            // // Adding our new todo to our local list variable and adding it to l
+        }
+        else {
+            alert("You already have a " + newdecade + " button!")
+        }
+
+        // Remove the default features of the Submit Button
+        return false;
+
+    })
+
+    var title = "The%20Lord+Of+The+Rings";
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + title + "&api_key=qQ0LQq49j0vnEylR5TyfMMEiuCje5z0c&limit=5";
+
+    $(document).on("click", ".load-gif", function () {
         var gifnumber = $(this).attr("data-gif");
         console.log(gifnumber);
 
@@ -63,17 +82,24 @@ var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + title + "&api_key=qQ0
             url: queryURL,
             method: "GET"
         }).then(function (response) {
-            console.log(response);
-            console.log(response.Runtime);
-            // $("#gif-list").text(response);
-            // $("#gif-list").append(response);
-            $("#gif-list").append($("<div> id= 'gifimg' "));
-            
-        
+
+            for (var i = 0; i < response.data.length; i++) {
+
+                // Collect the animal gif URLs
+                var imageurl = response.data[i].images.fixed_height.url; // moving image
+
+                console.log(response);
+
+
+                $("#gif-list").append($("<img>"));
+                $("img").attr("src", imageurl);
+                $("img").append(imageurl);
+
+
+
+            }
 
         });
-
-
-
     });
 
+});
